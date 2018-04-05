@@ -1,23 +1,42 @@
 from datetime import datetime, timedelta
-from os import mkdir
-from os.path import exists
+from os import mkdir, makedirs
+from os.path import exists, abspath
 from re import findall
 from sys import argv
 
 from requests import get
 
-from baseball import write_svg_from_url, MLB_TEAM_CODE_DICT
+from baseball import (get_game_from_url, write_game_svg_and_html,
+                      MLB_TEAM_CODE_DICT)
 
 
 HTML_INDEX_PAGE = (
     '<html>'
       '<head>'
+      '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/'
+      'jquery.min.js"></script>'
         '<link rel="icon" type="image/png" href="baseball-fairy-161.png" />'
-        '<meta http-equiv="refresh" content="30">'
         '<meta http-equiv="cache-control" content="no-cache">'
+        '<meta http-equiv="refresh" content="45">'
         '<!-- Global site tag (gtag.js) - Google Analytics -->'
         '<script async src="https://www.googletagmanager.com/gtag/js'
         '?id=UA-108577160-1"></script>'
+        '<script>'
+            'var timeoutPeriod = 1000;'
+            'var imageURI = "2017-10-21-NYY-HOU-1.svg";'
+            'var x=0, y=0;'
+            'var img = new Image();'
+            'img.onload = function() {{'
+                'var canvas = document.getElementById("x");'
+                'var context = canvas.getContext("2d");'
+                'context.drawImage(img, x, y);'
+                'x+=20; y+=20;'
+                'setTimeout(timedRefresh,timeoutPeriod);'
+            '}};'
+            'function timedRefresh() {{'
+                'img.src = imageURI + "?d=" + Date.now();'
+            '}}'
+        '</script>'
         '<script>'
           'window.dataLayer = window.dataLayer || [];'
           'function gtag(){{dataLayer.push(arguments);}}'
@@ -159,6 +178,7 @@ HTML_INDEX_PAGE = (
             '<option value="31">31</option>'
           '</select>'
           '<select name="year" id="year">'
+            '<option value="2018">2018</option>'
             '<option value="2017">2017</option>'
             '<option value="2016">2016</option>'
             '<option value="2015">2015</option>'
@@ -195,7 +215,7 @@ HTML_INDEX_PAGE = (
           '<font size="6" color="white">Today\'s Games (live updates)</font>'
         '</div>'
         '<br />'
-        '<table style="width:1160px" align="center">'
+        '<table cellpadding="10" style="width:1160px" align="center">'
         '{result_object_list_str}'
         '</table>'
         '<script>'
@@ -258,23 +278,23 @@ HTML_INDEX_PAGE = (
     '</html>'
 )
 
+
 OBJECT_ENTRY_TEMPLATE = (
-    '<tr><td>'
-    '<div align="center">'
-    '<font size="5" color="white">{title_str}</font>'
+    '<td valign="top"><div align="center">'
+    '<a id="{game_id_str}">'
+    '<font size="5"><a style="color:lightblue; text-decoration: none;" '
+    'href="{game_id_str}.html">{title_str}</a></font>'
     '</div>'
-    '</td></tr>'
-    '<tr><td>'
+    '<br />'
     '<div align="center">'
-    '<object width="1160px" data="./{game_id_str}.svg" type="image/svg+xml">'
+    '<a href="./{game_id_str}.html"><img width="520px" '
+    'src="./{game_id_str}.svg" type="image/svg+xml"></a>'
     '</div>'
-    '</td></tr>'
-    '<tr><td><br /></td></tr>'
-    '<tr><td><br /></td></tr>'
+    '</td>'
 )
 
 MLB_URL_BASE_PATTERN = ('http://gd2.mlb.com/components/game/mlb/year_{year}/'
-                        'month_{month}/day_{day}/')
+                        'month_{month}/day_{day}')
 
 GET_TODAY_GAMES_USAGE_STR = (
     'Usage:\n'
@@ -299,7 +319,12 @@ def get_today_date_str(this_datetime):
     return today_date_str
 
 def get_generated_html_id_list(game_id_list, today_date_str, output_dir):
+    if not exists(output_dir):
+        makedirs(output_dir)
+
+    output_path = abspath(output_dir)
     game_html_id_list = []
+
     for game_id in game_id_list:
         away_mlb_code = game_id.split('_')[-3][:3]
         home_mlb_code = game_id.split('_')[-2][:3]
@@ -312,13 +337,13 @@ def get_generated_html_id_list(game_id_list, today_date_str, output_dir):
             home_code = [key for key, val in MLB_TEAM_CODE_DICT.items()
                          if val == home_mlb_code][0]
 
-            success = write_svg_from_url(today_date_str,
-                                         away_code,
-                                         home_code,
-                                         game_num_str,
-                                         output_dir)
+            game_id, game = get_game_from_url(today_date_str,
+                                              away_code,
+                                              home_code,
+                                              game_num_str)
 
-            if success:
+            if game:
+                write_game_svg_and_html(game_id, game, output_path)
                 game_html_id_list.append(
                     '{}-{}-{}-{}'.format(today_date_str,
                                          away_code,
@@ -330,7 +355,7 @@ def get_generated_html_id_list(game_id_list, today_date_str, output_dir):
 
 def get_object_html_str(game_html_id_list):
     object_html_str = ''
-    for game_html_id in game_html_id_list:
+    for i, game_html_id in enumerate(game_html_id_list):
         game_id_element_list = game_html_id.split('-')
         title_str = '{} @ {} ({}-{}-{}, {})'.format(
             game_id_element_list[3],
@@ -341,10 +366,16 @@ def get_object_html_str(game_html_id_list):
             game_id_element_list[5]
         )
 
+        if i % 2 == 0:
+            object_html_str += '<tr>'
+
         object_html_str += OBJECT_ENTRY_TEMPLATE.format(
             title_str=title_str,
             game_id_str=game_html_id
         )
+
+        if i % 2 == 1:
+            object_html_str += '</tr>'
 
     return object_html_str
 
