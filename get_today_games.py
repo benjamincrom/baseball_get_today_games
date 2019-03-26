@@ -4,6 +4,7 @@ from os.path import exists, abspath
 from re import findall
 from sys import argv
 
+from ddtrace import tracer
 from requests import get
 
 from baseball import (get_game_from_url, write_game_svg_and_html,
@@ -51,15 +52,14 @@ HTML_INDEX_PAGE = (
           '<img src="baseball-fairy-bat-250.png" height="250"><br />'
           '<font size="7" color="white">'
           'LiveBaseballScorecards.com'
-          '</font><br /><br />'
-          '<font size="6" color="white">Select a game</font>'
-          '<br />'
+          '</font><br />'
           '<font size="3" color="white">'
-            'Currently in beta testing.  Send error reports to '
+            'Contact us at '
             '<a href="mailto:livebaseballscorecards@gmail.com" '
-            'style="color:lightblue">livebaseballscorecards@gmail.com</a>.'
-            '<br /> '
+            'style="color:lightblue">livebaseballscorecards@gmail.com</a>'
+            '<br /><br />'
           '<br />'
+          '<font size="6" color="white">Select a game</font>'
           '<br />'
           '<select name="away" id="away">'
             '<option value="">Away Team</option>'
@@ -178,6 +178,7 @@ HTML_INDEX_PAGE = (
             '<option value="31">31</option>'
           '</select>'
           '<select name="year" id="year">'
+            '<option value="2019">2019</option>'
             '<option value="2018">2018</option>'
             '<option value="2017">2017</option>'
             '<option value="2016">2016</option>'
@@ -211,8 +212,8 @@ HTML_INDEX_PAGE = (
           '</script>'
           '<button onclick="gotogame()">Submit</button>'
           '<br />'
-          '<br />'
-          '<font size="6" color="white">Today\'s Games (live updates)</font>'
+          '<br /><br />'
+          '<font size="6" color="white">Today\'s Games</font>'
         '</div>'
         '<br />'
         '<table cellpadding="10" style="width:1160px" align="center">'
@@ -397,6 +398,7 @@ def generate_game_svgs_for_datetime(this_datetime, output_dir):
         with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
+@tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
     time_shift = timedelta(hours=11)
     today_datetime = datetime.utcnow() - time_shift
@@ -407,3 +409,4 @@ if __name__ == '__main__':
         print(GET_TODAY_GAMES_USAGE_STR)
     else:
         generate_today_game_svgs(argv[1])
+
