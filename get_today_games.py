@@ -410,4 +410,3 @@ if __name__ == '__main__':
         print(GET_TODAY_GAMES_USAGE_STR)
     else:
         generate_today_game_svgs(argv[1])
-
