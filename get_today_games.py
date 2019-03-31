@@ -17,6 +17,7 @@ HTML_INDEX_PAGE = (
       '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/'
       'jquery.min.js"></script>'
         '<link rel="icon" type="image/png" href="baseball-fairy-161.png" />'
+        '<meta name="viewport" content="width=device-width, initial-scale=0.35">'
         '<meta http-equiv="cache-control" content="no-cache">'
         '<meta http-equiv="refresh" content="45">'
         '<!-- Global site tag (gtag.js) - Google Analytics -->'
