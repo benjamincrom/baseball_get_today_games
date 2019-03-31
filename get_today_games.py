@@ -4,8 +4,8 @@ from os.path import exists, abspath
 from re import findall
 from sys import argv
 
-from ddtrace import tracer
 from requests import get
+from ddtrace import tracer
 
 from baseball import (get_game_from_url, write_game_svg_and_html,
                       MLB_TEAM_CODE_DICT)
