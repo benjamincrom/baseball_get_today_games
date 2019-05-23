@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from os import mkdir, makedirs
 from os.path import exists, abspath
 from re import findall
-from sys import argv
+from sys import argv, exc_info
+from traceback import format_exception
 
 from requests import get
 from ddtrace import tracer
@@ -54,12 +55,13 @@ HTML_INDEX_PAGE = (
           '<font size="7" color="white">'
           'LiveBaseballScorecards.com'
           '</font><br />'
-          '<font size="3" color="white">'
+          '<font size="5" color="white">'
             'Contact us at '
             '<a href="mailto:livebaseballscorecards@gmail.com" '
             'style="color:lightblue">livebaseballscorecards@gmail.com</a>'
+            '<br />'
+            'For abbreviation definitions, hover your mouse over the scorecard text or just click <a style="color:lightblue" href="abbreviations.html">here</a>.'
             '<br /><br />'
-          '<br />'
           '<font size="6" color="white">Select a game</font>'
           '<br />'
           '<select name="away" id="away">'
@@ -212,7 +214,6 @@ HTML_INDEX_PAGE = (
             '}}'
           '</script>'
           '<button onclick="gotogame()">Submit</button>'
-          '<br />'
           '<br /><br />'
           '<font size="6" color="white">Today\'s Games</font>'
         '</div>'
@@ -339,19 +340,25 @@ def get_generated_html_id_list(game_id_list, today_date_str, output_dir):
             home_code = [key for key, val in MLB_TEAM_CODE_DICT.items()
                          if val == home_mlb_code][0]
 
-            game_id, game = get_game_from_url(today_date_str,
-                                              away_code,
-                                              home_code,
-                                              game_num_str)
+            try:
+                game_id, game = get_game_from_url(today_date_str,
+                                                  away_code,
+                                                  home_code,
+                                                  game_num_str)
 
-            if game:
-                write_game_svg_and_html(game_id, game, output_path)
-                game_html_id_list.append(
-                    '{}-{}-{}-{}'.format(today_date_str,
-                                         away_code,
-                                         home_code,
-                                         game_num_str)
-                )
+                if game:
+                    write_game_svg_and_html(game_id, game, output_path)
+                    game_html_id_list.append(
+                        '{}-{}-{}-{}'.format(today_date_str,
+                                             away_code,
+                                             home_code,
+                                             game_num_str)
+                    )
+            except:
+                exc_type, exc_value, exc_traceback = exc_info()
+                lines = format_exception(exc_type, exc_value, exc_traceback)
+                exception_str = ' '.join(lines)
+                print('{} {} {}'.format(datetime.utcnow(), game_id, exception_str))
 
     return game_html_id_list
 
