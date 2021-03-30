@@ -743,6 +743,11 @@ def process_inning(baseball_inning, game_obj):
     else:
         bottom_half_appearance_list = []
 
+    if top_half_appearance_list and top_half_appearance_list[-1] is None:
+        del top_half_appearance_list[-1]
+    if bottom_half_appearance_list and bottom_half_appearance_list[-1] is None:
+        del bottom_half_appearance_list[-1]
+
     this_inning_obj = baseball.Inning(top_half_appearance_list,
                                       bottom_half_appearance_list)
 
@@ -820,7 +825,6 @@ def write_games_for_date(this_datetime, output_dir):
         with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
-@tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
     time_shift = timedelta(hours=11)
     today_datetime = datetime.utcnow() - time_shift
