@@ -715,6 +715,9 @@ def process_half_inning(plate_appearance_dict_list, inning_half_str, game_obj):
     for plate_appearance_dict in plate_appearance_dict_list:
         steal_description = None
         event_list = []
+        if plate_appearance_dict['result'].get('event') == 'Game Advisory':
+            continue
+
         plate_appearance_list.append(
             process_at_bat(
                 plate_appearance_dict,
@@ -815,12 +818,17 @@ def write_games_for_date(this_datetime, output_dir):
             game.set_team_stats()
             game.set_gametimes()
             baseball.fetch_game.write_game_svg_and_html(game.game_date_str, game, output_dir)
-            game_html_id_list.append(game.game_date_str)
+            if len(game.game_date_str.split('-')) == 6:
+                game_html_id_list.append(game.game_date_str)
         except Exception as e:
             print(game_dict['gameData']['game']['id'])
             print(e)
+            #raise(e)
             print()
 
+    print()
+    print(game_html_id_list)
+    print()
     object_html_str = get_object_html_str(game_html_id_list)
     output_html = HTML_INDEX_PAGE.format(result_object_list_str=object_html_str)
     if object_html_str or not exists(output_dir + '/index.html'):
