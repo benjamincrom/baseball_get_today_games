@@ -350,7 +350,7 @@ def initialize_team(team_gamedata_dict, team_livedata_dict):
     set_player_list(team_livedata_dict, team)
     team.pitcher_list = [
         baseball.PlayerAppearance(
-            team[team_livedata_dict['pitchers'][0]], 1, 1, 'Top', 1
+            team[team_livedata_dict['pitchers'][0]], 1, 1, 'top', 1
         )
     ]
 
@@ -366,7 +366,7 @@ def initialize_team(team_gamedata_dict, team_livedata_dict):
                         team[int(player_dict['person']['id'])],
                         position,
                         1,
-                        'Top',
+                        'top',
                         1
                     )
                 ]
@@ -820,6 +820,7 @@ def write_games_for_date(this_datetime, output_dir):
             baseball.fetch_game.write_game_svg_and_html(game.game_date_str, game, output_dir)
             if len(game.game_date_str.split('-')) == 6:
                 game_html_id_list.append(game.game_date_str)
+                import pdb; pdb.set_trace()
         except Exception as e:
             print(game_dict['gameData']['game']['id'])
             print(e)
