@@ -823,7 +823,7 @@ def write_games_for_date(this_datetime, output_dir):
         except Exception as e:
             print(game_dict['gameData']['game']['id'])
             print(e)
-            #raise(e)
+            raise(e)
             print()
 
     object_html_str = get_object_html_str(game_html_id_list)

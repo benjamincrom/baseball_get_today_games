@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="icon" type="image/png" href="baseball-fairy-161.png" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-108577160-1"></script>
 <script>
-
+window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-108577160-1');
+</script>
+<script>
 $(document).ready(function() {
+	$.get('2021-3-30-PIT-MIN-1.svg', function (data) {
+			document.getElementById("2021-3-30-PIT-MIN-1").innerHTML = new XMLSerializer().serializeToString(data.documentElement);
+    });
     setInterval(function() {
         $.get('2021-3-30-PIT-MIN-1.svg', function (data) {
-			document.getElementById("documentElement").innerHTML = new XMLSerializer().serializeToString(data.documentElement);
+			document.getElementById("2021-3-30-PIT-MIN-1").innerHTML = new XMLSerializer().serializeToString(data.documentElement);
         });
     }, 3000); 
 });
-
 </script>
 </head>
-<body>
-<object width="1160px" id="documentElement"></object>
+<body style="background-color:black;">
+<div align="center">
+<object width="1160px" id="2021-3-30-PIT-MIN-1"></object>
+</div>
 </body>
 </html>
-
-
-
