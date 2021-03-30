@@ -5,6 +5,8 @@ from os import mkdir, makedirs
 from os.path import exists, abspath
 from traceback import format_exception
 
+from ddtrace import tracer
+
 import requests
 import baseball
 
@@ -818,6 +820,7 @@ def write_games_for_date(this_datetime, output_dir):
         with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
+@tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
     time_shift = timedelta(hours=11)
     today_datetime = datetime.utcnow() - time_shift
