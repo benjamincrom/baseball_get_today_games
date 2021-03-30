@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+$(document).ready(function() {
+    setInterval(function() {
+        $.get('2021-3-30-PIT-MIN-1.svg', function (data) {
+			document.getElementById("documentElement").innerHTML = new XMLSerializer().serializeToString(data.documentElement);
+        });
+    }, 3000); 
+});
+
+</script>
+</head>
+<body>
+<object width="1160px" id="documentElement"></object>
+</body>
+</html>
+
+
+
