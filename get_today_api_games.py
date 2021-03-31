@@ -579,9 +579,6 @@ def process_plate_appearance(plate_appearance, inning_half_str, inning_num, next
         run_earned = runner_event['details'].get('earned')
         is_rbi = runner_event['details'].get('rbi')
 
-        if end_base == 'score':
-            end_base = ''
-
         runner_advance_obj = baseball.baseball_events.RunnerAdvance(
             run_description,
             runner,
@@ -795,7 +792,7 @@ def write_games_for_date(this_datetime, output_dir):
         mkdir(output_dir)
 
     month = this_datetime.month
-    day = this_datetime.day
+    day = this_datetime.day-1
     year = this_datetime.year
     all_games_dict = requests.get(ALL_GAMES_URL.format(month=month, day=day, year=year)).json()
     game_tuple_list = [(x['id'], x['game_pk']) for x in all_games_dict['data']['games'].get('game', [])]
@@ -815,6 +812,7 @@ def write_games_for_date(this_datetime, output_dir):
             baseball.fetch_game.write_game_svg_and_html(game.game_date_str, game, output_dir)
             if len(game.game_date_str.split('-')) == 6:
                 game_html_id_list.append(game.game_date_str)
+                import pdb; pdb.set_trace()
         except Exception as e:
             print(game_dict['gameData']['game']['id'])
             print(e)
@@ -827,7 +825,7 @@ def write_games_for_date(this_datetime, output_dir):
         with open(output_dir + '/index_template.html', 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
-@tracer.wrap(service='get-todays-games')
+#@tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
     time_shift = timedelta(hours=11)
     today_datetime = datetime.utcnow() - time_shift
