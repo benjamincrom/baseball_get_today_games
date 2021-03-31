@@ -285,7 +285,7 @@ OBJECT_ENTRY_TEMPLATE = (
     '</div>'
     '<br />'
     '<div align="center">'
-    '<a href="./{game_id_str}.html">'
+    '<a href="./{game_id_str}.html" style="text-decoration:none">'
     '<div align="center">'
     '<object id="{game_id_str}"></object>'
     '</div>'
