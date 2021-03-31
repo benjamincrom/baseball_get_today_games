@@ -812,7 +812,6 @@ def write_games_for_date(this_datetime, output_dir):
             baseball.fetch_game.write_game_svg_and_html(game.game_date_str, game, output_dir)
             if len(game.game_date_str.split('-')) == 6:
                 game_html_id_list.append(game.game_date_str)
-                import pdb; pdb.set_trace()
         except Exception as e:
             print(game_dict['gameData']['game']['id'])
             print(e)
@@ -825,7 +824,7 @@ def write_games_for_date(this_datetime, output_dir):
         with open(output_dir + '/index_template.html', 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
-#@tracer.wrap(service='get-todays-games')
+@tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
     time_shift = timedelta(hours=11)
     today_datetime = datetime.utcnow() - time_shift
