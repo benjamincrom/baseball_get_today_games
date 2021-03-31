@@ -10,7 +10,7 @@
             $.get('index_template.html', function (data) {
                 document.getElementById("main_html").innerHTML = data;
             });
-        }, 30000);
+        }, 300000);
         var arr = document.getElementById("main_html").getElementsByTagName('script')
         for (var n = 0; n < arr.length; n++)
             eval(arr[n].innerHTML)
