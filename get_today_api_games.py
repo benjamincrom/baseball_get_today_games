@@ -24,7 +24,6 @@ HTML_INDEX_PAGE = (
         '<link rel="icon" type="image/png" href="baseball-fairy-161.png" />'
         '<meta name="viewport" content="width=device-width, initial-scale=0.35">'
         '<meta http-equiv="cache-control" content="no-cache">'
-        '<meta http-equiv="refresh" content="300">'
         '<!-- Global site tag (gtag.js) - Google Analytics -->'
         '<script async src="https://www.googletagmanager.com/gtag/js'
         '?id=UA-108577160-1"></script>'
