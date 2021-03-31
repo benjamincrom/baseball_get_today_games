@@ -11,11 +11,11 @@ window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(argumen
 <script>
 $(document).ready(function() {
 	$.get('2021-3-30-PIT-MIN-1.svg', function (data) {
-			document.getElementById("2021-3-30-PIT-MIN-1").innerHTML = new XMLSerializer().serializeToString(data.documentElement);
+			document.getElementById("2021-3-30-PIT-MIN-1").innerHTML = new XMLSerializer().serializeToString(data.documentElement).replace('height="2256" ', 'height="564" ');
     });
     setInterval(function() {
         $.get('2021-3-30-PIT-MIN-1.svg', function (data) {
-			document.getElementById("2021-3-30-PIT-MIN-1").innerHTML = new XMLSerializer().serializeToString(data.documentElement);
+			document.getElementById("2021-3-30-PIT-MIN-1").innerHTML = new XMLSerializer().serializeToString(data.documentElement).replace('height="2256" ', 'height="564" ');
         });
     }, 3000); 
 });
