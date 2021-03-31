@@ -579,6 +579,9 @@ def process_plate_appearance(plate_appearance, inning_half_str, inning_num, next
         run_earned = runner_event['details'].get('earned')
         is_rbi = runner_event['details'].get('rbi')
 
+        if end_base == 'score':
+            end_base = ''
+
         runner_advance_obj = baseball.baseball_events.RunnerAdvance(
             run_description,
             runner,
