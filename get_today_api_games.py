@@ -792,7 +792,7 @@ def write_games_for_date(this_datetime, output_dir):
         mkdir(output_dir)
 
     month = this_datetime.month
-    day = this_datetime.day-1
+    day = this_datetime.day
     year = this_datetime.year
     all_games_dict = requests.get(ALL_GAMES_URL.format(month=month, day=day, year=year)).json()
     game_tuple_list = [(x['id'], x['game_pk']) for x in all_games_dict['data']['games'].get('game', [])]
