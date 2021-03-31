@@ -395,10 +395,10 @@ def initialize_game(this_game):
     )
 
     if start_date:
-        game_str = '{}-{}-{}-{}-{}{}'.format(
-            start_date.year,
-            start_date.month,
-            start_date.day,
+        game_str = '{:04d}-{:02d}-{:02d}-{}-{}{}'.format(
+            int(start_date.year),
+            int(start_date.month),
+            int(start_date.day),
             away_team.abbreviation,
             home_team.abbreviation,
             this_game['gameData']['game']['id'][-2:]
@@ -765,12 +765,12 @@ def get_object_html_str(game_html_id_list):
     object_html_str = ''
     for i, game_html_id in enumerate(game_html_id_list):
         game_id_element_list = game_html_id.split('-')
-        title_str = '{} @ {} ({}-{}-{}, {})'.format(
+        title_str = '{} @ {} ({:04d}-{:02d}-{:02d}, {})'.format(
             game_id_element_list[3],
             game_id_element_list[4],
-            game_id_element_list[0],
-            game_id_element_list[1],
-            game_id_element_list[2],
+            int(game_id_element_list[0]),
+            int(game_id_element_list[1]),
+            int(game_id_element_list[2]),
             game_id_element_list[5]
         )
 
