@@ -384,7 +384,7 @@ def initialize_game(this_game):
 
     start_date = None
     for play_event in this_game['liveData']['plays']['allPlays'][0]['playEvents']:
-        if play_event['details']['description'] == 'Status Change - In Progress':
+        if play_event['type'] == 'pitch':
             start_date = baseball.process_game_xml.get_datetime(
                 play_event['startTime']
             )
