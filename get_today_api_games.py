@@ -843,7 +843,7 @@ def write_games_for_date(this_datetime, output_dir):
 
     object_html_str = get_object_html_str(game_html_id_list)
     output_html = HTML_INDEX_PAGE.format(result_object_list_str=object_html_str)
-    if object_html_str or not exists(output_dir + '/index.html'):
+    if object_html_str or not exists(output_dir + '/index_template.html'):
         with open(output_dir + '/index_template.html', 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
