@@ -20,9 +20,26 @@ HTML_INDEX_PAGE = (
         '<link rel="icon" type="image/png" href="baseball-fairy-161.png" />'
         '<meta name="viewport" content="width=device-width, initial-scale=0.35">'
         '<meta http-equiv="cache-control" content="no-cache">'
+        '<meta http-equiv="refresh" content="45">'
         '<!-- Global site tag (gtag.js) - Google Analytics -->'
         '<script async src="https://www.googletagmanager.com/gtag/js'
         '?id=UA-108577160-1"></script>'
+        '<script>'
+            'var timeoutPeriod = 1000;'
+            'var imageURI = "2017-10-21-NYY-HOU-1.svg";'
+            'var x=0, y=0;'
+            'var img = new Image();'
+            'img.onload = function() {{'
+                'var canvas = document.getElementById("x");'
+                'var context = canvas.getContext("2d");'
+                'context.drawImage(img, x, y);'
+                'x+=20; y+=20;'
+                'setTimeout(timedRefresh,timeoutPeriod);'
+            '}};'
+            'function timedRefresh() {{'
+                'img.src = imageURI + "?d=" + Date.now();'
+            '}}'
+        '</script>'
         '<script>'
           'window.dataLayer = window.dataLayer || [];'
           'function gtag(){{dataLayer.push(arguments);}}'
@@ -205,6 +222,12 @@ HTML_INDEX_PAGE = (
         '{result_object_list_str}'
         '</table>'
         '<script>'
+          'window.addEventListener("scroll", function(e) {{ '
+            'localStorage.setItem("last_scroll", $(window).scrollTop()); '
+          '}}); \n'
+          'if (localStorage.getItem("last_scroll")) {{ '
+            '$(window).scrollTop(localStorage.getItem("last_scroll")); '
+          '}} '
           'document.getElementById("day").onchange = function() {{ '
             'localStorage.setItem("dayselecteditem", '
             'document.getElementById("day").value); '
@@ -379,8 +402,8 @@ def generate_game_svgs_for_datetime(this_datetime, output_dir):
 
     object_html_str = get_object_html_str(game_html_id_list)
     output_html = HTML_INDEX_PAGE.format(result_object_list_str=object_html_str)
-    if object_html_str or not exists(output_dir + '/index_template.html'):
-        with open(output_dir + '/index_template.html', 'w', encoding='utf-8') as fh:
+    if object_html_str or not exists(output_dir + '/index.html'):
+        with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
 @tracer.wrap(service='get-todays-games')
