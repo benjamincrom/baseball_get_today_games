@@ -206,8 +206,6 @@ HTML_INDEX_PAGE = (
             '<option {year_list[2012]} value="2012">2012</option>'
             '<option {year_list[2011]} value="2011">2011</option>'
             '<option {year_list[2010]} value="2010">2010</option>'
-            '<option {year_list[2009]} value="2009">2009</option>'
-            '<option {year_list[2008]} value="2008">2008</option>'
           '</select>'
           '<div class="clickme" onclick="goforwardone()"><i class="arrow right"></i></div>'
           '<br />'
