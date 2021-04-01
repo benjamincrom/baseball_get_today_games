@@ -821,10 +821,11 @@ def write_games_for_date(this_datetime, output_dir):
             output_dir + '/{:04d}-{:02d}-{:02d}.html'.format(int(year), int(month), int(day))):
         with open(output_dir + '/{:04d}-{:02d}-{:02d}.html'.format(int(year), int(month), int(day)), 'w', encoding='utf-8') as fh:
             fh.write(output_html)
-        with open(output_dir + '/index_template.html', 'w', encoding='utf-8') as fh:
-            fh.write(output_html)
-        with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
-            fh.write(PLACEHOLDER_INDEX.format(yesterday_html=yesterday_html, tomorrow_html=tomorrow_html))
+
+    with open(output_dir + '/index_template.html', 'w', encoding='utf-8') as fh:
+        fh.write(output_html)
+    with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
+        fh.write(PLACEHOLDER_INDEX.format(yesterday_html=yesterday_html, tomorrow_html=tomorrow_html))
 
 @tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
