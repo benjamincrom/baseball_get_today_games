@@ -156,7 +156,7 @@ HTML_INDEX_PAGE = (
             '<option {year_list[2009]} value="2009">2009</option>'
             '<option {year_list[2008]} value="2008">2008</option>'
           '</select>'
-          '<div class="clickme" onclick="gofowardone()"><i class="arrow right"></i></div>'
+          '<div class="clickme" onclick="goforwardone()"><i class="arrow right"></i></div>'
           '<br />'
           '<script>'
             'function gotogame() {{'
