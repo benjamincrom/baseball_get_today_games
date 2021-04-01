@@ -810,16 +810,19 @@ def write_games_for_date(this_datetime, output_dir):
     tomorrow_html = '{:04d}-{:02d}-{:02d}.html'.format(int(tomorrow.astimezone(timezone('America/New_York')).year),
                                                        int(tomorrow.astimezone(timezone('America/New_York')).month),
                                                        int(tomorrow.astimezone(timezone('America/New_York')).day))
+
+    output_filename = '/{:04d}-{:02d}-{:02d}.html'.format(int(year), int(month), int(day))
     output_html = HTML_INDEX_PAGE.format(result_object_list_str=object_html_str,
                                          month_list=month_list,
                                          day_list=day_list,
                                          year_list=year_list,
                                          yesterday_html=yesterday_html,
                                          tomorrow_html=tomorrow_html,
-                                         today_str=today_str)
+                                         today_str=today_str,
+                                         output_filename=output_filename)
     if object_html_str or not exists(
-            output_dir + '/{:04d}-{:02d}-{:02d}.html'.format(int(year), int(month), int(day))):
-        with open(output_dir + '/{:04d}-{:02d}-{:02d}.html'.format(int(year), int(month), int(day)), 'w', encoding='utf-8') as fh:
+            output_dir + output_filename):
+        with open(output_dir + output_filename, 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
     with open(output_dir + '/index_template.html', 'w', encoding='utf-8') as fh:
