@@ -1,8 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import timedelta, date
+from dateutil.parser import parse
 from re import search, sub, findall
 from sys import argv, exc_info
-from os import mkdir, makedirs
-from os.path import exists, abspath
+from os import mkdir, makedirs, listdir
+from os.path import exists, abspath, isfile, join
 from traceback import format_exception
 
 from ddtrace import tracer
@@ -149,30 +150,15 @@ HTML_INDEX_PAGE = (
 
 
 OBJECT_ENTRY_TEMPLATE = (
-    '<script>'
-    '$(document).ready(function() {{'
-    '$.get(\'{game_id_str}.svg\', function (data) {{'
-    'document.getElementById("{game_id_str}").innerHTML = new XMLSerializer().serializeToString(data.documentElement).replace(\'height="2256" \', \'height="735" \');'
-    '}});'
-    'setInterval(function() {{'
-    '$.get(\'{game_id_str}.svg\', function (data) {{'
-    'document.getElementById("{game_id_str}").innerHTML = new XMLSerializer().serializeToString(data.documentElement).replace(\'height="2256" \', \'height="735" \');'
-    '}});'
-    '}}, 3000);'
-    '}});'
-    '</script>'
     '<td valign="top"><div align="center">'
-    '<a>'
+    '<a id="{game_id_str}">'
     '<font size="5"><a style="color:lightblue; text-decoration: none;" '
     'href="{game_id_str}.html">{title_str}</a></font>'
     '</div>'
     '<br />'
     '<div align="center">'
-    '<a href="./{game_id_str}.html" style="text-decoration:none">'
-    '<div align="center">'
-    '<object id="{game_id_str}"></object>'
-    '</div>'
-    '</a>'
+    '<a href="./{game_id_str}.html"><img width="520px" '
+    'src="./{game_id_str}.svg" type="image/svg+xml"></a>'
     '</div>'
     '</td>'
 )
@@ -670,38 +656,15 @@ def get_object_html_str(game_html_id_list):
 
     return object_html_str
 
-def write_games_for_date(this_datetime, output_dir):
+def write_games_for_date(this_datetime, file_list, output_dir):
     if not exists(output_dir):
         mkdir(output_dir)
 
     month = this_datetime.month
     day = this_datetime.day
     year = this_datetime.year
-    all_games_dict = requests.get(ALL_GAMES_URL.format(month=month, day=day, year=year)).json()
-    game_tuple_list = [(x['id'], x['game_pk']) for x in all_games_dict['data']['games'].get('game', [])]
-    game_dict_list = [requests.get(GAME_URL_TEMPLATE.format(game_pk=game_pk)).json()
-                      for _, game_pk in game_tuple_list]
 
-    game_html_id_list = []
-    for game_dict in game_dict_list:
-        try:
-            game = initialize_game(game_dict)
-            set_game_inning_list(get_inning_dict_list(game_dict), game)
-            set_pitcher_wls_codes(game_dict, game)
-            game.set_batting_box_score_dict()
-            game.set_pitching_box_score_dict()
-            game.set_team_stats()
-            game.set_gametimes()
-            baseball.fetch_game.write_game_svg_and_html(game.game_date_str, game, output_dir)
-            if len(game.game_date_str.split('-')) == 6:
-                game_html_id_list.append(game.game_date_str)
-        except Exception as e:
-            print(game_dict['gameData']['game']['id'])
-            print(e)
-            #raise(e)
-            print()
-
-    object_html_str = get_object_html_str(game_html_id_list)
+    object_html_str = get_object_html_str(file_list)
     month_list = []
     for index in range(12):
         if index == month - 1:
@@ -739,22 +702,33 @@ def write_games_for_date(this_datetime, output_dir):
             output_dir + '/{:04d}-{:02d}-{:02d}.html'.format(int(year), int(month), int(day))):
         with open(output_dir + '/{:04d}-{:02d}-{:02d}.html'.format(int(year), int(month), int(day)), 'w', encoding='utf-8') as fh:
             fh.write(output_html)
-        with open(output_dir + '/index_template.html', 'w', encoding='utf-8') as fh:
-            fh.write(output_html)
 
 @tracer.wrap(service='get-todays-games')
-def generate_today_game_svgs(output_dir):
-    time_shift = timedelta(hours=11)
-    for i in range(0, 1):
-        today_datetime = datetime.utcnow() - time_shift - timedelta(days=i)
+def generate_today_game_svgs(date_file_list_dict):
+    output_dir = '/var/www/html'
+    for date_str, file_list in date_file_list_dict.items():
+        today_datetime = parse(date_str)
         try:
-            write_games_for_date(today_datetime, output_dir)
+            write_games_for_date(today_datetime, file_list, output_dir)
         except Exception as e:
             print(e)
             print()
 
+def daterange(start_date, end_date):
+    for n in range(int((end_date - start_date).days)):
+        yield start_date + timedelta(n)
+
 if __name__ == '__main__':
-    if len(argv) < 2:
-        print(GET_TODAY_GAMES_USAGE_STR)
-    else:
-        generate_today_game_svgs(argv[1])
+    start_date = date(2010, 1, 1)
+    end_date = date(2020, 1, 1)
+    mypath = '/var/www/html'
+
+    all_dates = [single_date.strftime("%Y-%m-%d") for single_date in daterange(start_date, end_date)]
+    all_files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+
+    date_file_list_dict = {}
+    for date_str in all_dates:
+        date_file_list_dict[date_str] = [filename.strip('.svg') for filename in all_files if ((date_str in filename) and ('.svg' in filename))]
+
+    generate_today_game_svgs(date_file_list_dict)
+
