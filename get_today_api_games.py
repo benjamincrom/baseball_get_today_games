@@ -3,6 +3,7 @@ from re import search, sub, findall
 from sys import argv, exc_info
 from os import mkdir, makedirs
 from os.path import exists, abspath
+from pytz import timezone
 from traceback import format_exception
 
 from ddtrace import tracer
@@ -361,9 +362,9 @@ def initialize_game(this_game):
 
     if start_date:
         game_str = '{:04d}-{:02d}-{:02d}-{}-{}{}'.format(
-            int(start_date.year),
-            int(start_date.month),
-            int(start_date.day),
+            int(start_date.astimezone(timezone('America/New_York')).year),
+            int(start_date.astimezone(timezone('America/New_York')).month),
+            int(start_date.astimezone(timezone('America/New_York')).day),
             away_team.abbreviation,
             home_team.abbreviation,
             this_game['gameData']['game']['id'][-2:]
@@ -720,9 +721,9 @@ def set_game_inning_list(inning_dict_list, game_obj):
         game_obj.inning_list.append(process_inning(inning_dict, game_obj))
 
 def get_today_date_str(this_datetime):
-    today_date_str = '{}-{}-{}'.format(this_datetime.year,
-                                       str(this_datetime.month).zfill(2),
-                                       str(this_datetime.day).zfill(2))
+    today_date_str = '{}-{}-{}'.format(this_datetime.astimezone(timezone('America/New_York')).year,
+                                       str(this_datetime.astimezone(timezone('America/New_York')).month).zfill(2),
+                                       str(this_datetime.astimezone(timezone('America/New_York')).day).zfill(2))
 
     return today_date_str
 
@@ -808,8 +809,12 @@ def write_games_for_date(this_datetime, output_dir):
     today_str = this_datetime.strftime("%B %d, %Y")
     yesterday = this_datetime - timedelta(days=1)
     tomorrow = this_datetime + timedelta(days=1)
-    yesterday_html = '{:04d}-{:02d}-{:02d}.html'.format(int(yesterday.year), int(yesterday.month), int(yesterday.day))
-    tomorrow_html = '{:04d}-{:02d}-{:02d}.html'.format(int(tomorrow.year), int(tomorrow.month), int(tomorrow.day))
+    yesterday_html = '{:04d}-{:02d}-{:02d}.html'.format(int(yesterday.astimezone(timezone('America/New_York')).year),
+                                                        int(yesterday.astimezone(timezone('America/New_York')).month),
+                                                        int(yesterday.astimezone(timezone('America/New_York')).day))
+    tomorrow_html = '{:04d}-{:02d}-{:02d}.html'.format(int(tomorrow.astimezone(timezone('America/New_York')).year),
+                                                       int(tomorrow.astimezone(timezone('America/New_York')).month),
+                                                       int(tomorrow.astimezone(timezone('America/New_York')).day))
     output_html = HTML_INDEX_PAGE.format(result_object_list_str=object_html_str,
                                          month_list=month_list,
                                          day_list=day_list,
@@ -827,10 +832,10 @@ def write_games_for_date(this_datetime, output_dir):
     with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
         fh.write(PLACEHOLDER_INDEX.format(yesterday_html=yesterday_html, tomorrow_html=tomorrow_html))
 
-@tracer.wrap(service='get-todays-games')
+#@tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
     time_shift = timedelta(hours=11)
-    for i in range(0, 1):
+    for i in range(1, 2):
         today_datetime = datetime.utcnow() - time_shift - timedelta(days=i)
         try:
             write_games_for_date(today_datetime, output_dir)
