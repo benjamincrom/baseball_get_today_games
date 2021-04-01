@@ -834,9 +834,9 @@ def write_games_for_date(this_datetime, output_dir):
 
 @tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
-    time_shift = timedelta(hours=11)
+    time_shift = timedelta(hours=7)
     for i in range(0, 1):
-        today_datetime = datetime.utcnow() - time_shift
+        today_datetime = datetime.utcnow() - time_shift - timedelta(days=i)
         try:
             write_games_for_date(today_datetime, output_dir)
         except Exception as e:
