@@ -836,7 +836,7 @@ def write_games_for_date(this_datetime, output_dir):
 def generate_today_game_svgs(output_dir):
     time_shift = timedelta(hours=11)
     for i in range(0, 1):
-        today_datetime = datetime.utcnow() - time_shift - timedelta(days=i)
+        today_datetime = datetime.utcnow() - time_shift
         try:
             write_games_for_date(today_datetime, output_dir)
         except Exception as e:
