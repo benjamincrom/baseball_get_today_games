@@ -832,10 +832,10 @@ def write_games_for_date(this_datetime, output_dir):
     with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
         fh.write(PLACEHOLDER_INDEX.format(yesterday_html=yesterday_html, tomorrow_html=tomorrow_html))
 
-#@tracer.wrap(service='get-todays-games')
+@tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
     time_shift = timedelta(hours=11)
-    for i in range(1, 2):
+    for i in range(0, 1):
         today_datetime = datetime.utcnow() - time_shift - timedelta(days=i)
         try:
             write_games_for_date(today_datetime, output_dir)
