@@ -16,6 +16,59 @@ ALL_GAMES_URL = ('http://gdx.mlb.com/components/game/mlb/year_{year:04d}/'
 
 GAME_URL_TEMPLATE = 'http://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live'
 
+PLACEHOLDER_INDEX = (
+    '<html id="main_html">'
+    '<head>'
+    '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>'
+    '<!-- Global site tag (gtag.js) - Google Analytics -->'
+    '<script async src="https://www.googletagmanager.com/gtag/js?id=UA-108577160-1"></script>'
+    '<script>'
+        'window.dataLayer = window.dataLayer || [];'
+        'function gtag(){{dataLayer.push(arguments);}}'
+        'gtag("js", new Date());'
+        'gtag("config", "UA-108577160-1");'
+    '</script>'
+    '<script>'
+        'function gotogame() {{'
+            'window.location = "./" + document.getElementById("year").value +'
+            '"-" + document.getElementById("month").value + "-" +'
+            'document.getElementById("day").value + "-" +'
+            'document.getElementById("away").value + "-" +'
+            'document.getElementById("home").value + "-" +'
+            'document.getElementById("game").value + ".html";'
+        '}}'
+    '</script>'
+    '<script>'
+      'function gobackone() {{'
+        'window.location = "./{yesterday_html}";'
+      '}}'
+    '</script>'
+    '<script>'
+      'function goforwardone() {{'
+        'window.location = "./{tomorrow_html}";'
+    '}}'
+    '</script>'
+    '<script>'
+        '$(document).ready(function() {{'
+            '$.get(\'index_template.html\', function (data) {{'
+                'document.getElementById("main_html").innerHTML = data;'
+            '}});'
+            'setInterval(function() {{'
+                '$.get(\'index_template.html\', function (data) {{'
+                    'document.getElementById("main_html").innerHTML = data;'
+                '}});'
+            '}}, 300000);'
+            'var arr = document.getElementById("main_html").getElementsByTagName(\'script\');'
+            'for (var n = 0; n < arr.length; n++)'
+                'eval(arr[n].innerHTML)'
+        '}});'
+    '</script>'
+    '</head>'
+    '<body>'
+    '</body>'
+    '</html>'
+)
+
 HTML_INDEX_PAGE = (
     '<html>'
       '<head>'
@@ -770,6 +823,8 @@ def write_games_for_date(this_datetime, output_dir):
             fh.write(output_html)
         with open(output_dir + '/index_template.html', 'w', encoding='utf-8') as fh:
             fh.write(output_html)
+        with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
+            fh.write(PLACEHOLDER_INDEX.format(yesterday_html=yesterday_html, tomorrow_html=tomorrow_html))
 
 @tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
