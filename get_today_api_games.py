@@ -674,13 +674,6 @@ def set_game_inning_list(inning_dict_list, game_obj):
     for inning_index, inning_dict in enumerate(inning_dict_list):
         game_obj.inning_list.append(process_inning(inning_dict, game_obj))
 
-def get_today_date_str(this_datetime):
-    today_date_str = '{}-{}-{}'.format(this_datetime.astimezone(timezone('America/New_York')).year,
-                                       str(this_datetime.astimezone(timezone('America/New_York')).month).zfill(2),
-                                       str(this_datetime.astimezone(timezone('America/New_York')).day).zfill(2))
-
-    return today_date_str
-
 def get_object_html_str(game_html_id_list):
     object_html_str = ''
     for i, game_html_id in enumerate(game_html_id_list):
@@ -760,15 +753,18 @@ def write_games_for_date(this_datetime, output_dir):
         else:
             year_list.append('')
 
-    today_str = this_datetime.strftime("%B %d, %Y")
+    today_str = '{} {}, {}'.format(this_datetime.strftime("%B"),
+                                   this_datetime.day,
+                                   this_datetime.year)
+
     yesterday = this_datetime - timedelta(days=1)
     tomorrow = this_datetime + timedelta(days=1)
-    yesterday_html = '{:04d}-{:02d}-{:02d}.html'.format(int(yesterday.astimezone(timezone('America/New_York')).year),
-                                                        int(yesterday.astimezone(timezone('America/New_York')).month),
-                                                        int(yesterday.astimezone(timezone('America/New_York')).day))
-    tomorrow_html = '{:04d}-{:02d}-{:02d}.html'.format(int(tomorrow.astimezone(timezone('America/New_York')).year),
-                                                       int(tomorrow.astimezone(timezone('America/New_York')).month),
-                                                       int(tomorrow.astimezone(timezone('America/New_York')).day))
+    yesterday_html = '{:04d}-{:02d}-{:02d}.html'.format(int(yesterday.year),
+                                                        int(yesterday.month),
+                                                        int(yesterday.day))
+    tomorrow_html = '{:04d}-{:02d}-{:02d}.html'.format(int(tomorrow.year),
+                                                       int(tomorrow.month),
+                                                       int(tomorrow.day))
 
     output_filename = '/{:04d}-{:02d}-{:02d}.html'.format(int(year), int(month), int(day))
     output_html = HTML_INDEX_PAGE.format(result_object_list_str=object_html_str,
@@ -793,7 +789,10 @@ def generate_today_game_svgs(output_dir):
     for i in range(0, 1):
         today_datetime = datetime.utcnow() - time_shift - timedelta(days=i)
         try:
-            write_games_for_date(today_datetime, output_dir)
+            write_games_for_date(
+                today_datetime.astimezone(timezone('America/New_York')),
+                output_dir
+            )
         except Exception as e:
             print(e)
             print()
