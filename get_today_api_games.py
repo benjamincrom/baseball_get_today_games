@@ -743,11 +743,13 @@ def write_games_for_date(this_datetime, output_dir):
             baseball.fetch_game.write_game_svg_and_html(game.game_date_str, game, output_dir)
             if len(game.game_date_str.split('-')) == 6:
                 game_html_id_list.append(game.game_date_str)
-        except Exception as e:
-            print(game_dict['gameData']['game']['id'])
-            print(e)
-            #raise(e)
-            print()
+        except:
+            exc_type, exc_value, exc_traceback = exc_info()
+            lines = format_exception(exc_type, exc_value, exc_traceback)
+            exception_str = ' '.join(lines)
+            print('{} {} {}'.format(datetime.utcnow(),
+                                    game_dict['gameData']['game']['id'],
+                                    exception_str))
 
     object_html_str = get_object_html_str(game_html_id_list)
     month_list = []
@@ -811,9 +813,13 @@ def generate_today_game_svgs(output_dir):
                 today_datetime.astimezone(timezone('America/New_York')),
                 output_dir
             )
-        except Exception as e:
-            print(e)
-            print()
+        except:
+            exc_type, exc_value, exc_traceback = exc_info()
+            lines = format_exception(exc_type, exc_value, exc_traceback)
+            exception_str = ' '.join(lines)
+            print('{} ({}) {}'.format(datetime.utcnow(),
+                                      str(today_datetime),
+                                      exception_str))
 
 if __name__ == '__main__':
     if len(argv) < 2:
