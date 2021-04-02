@@ -17,61 +17,8 @@ ALL_GAMES_URL = ('http://gdx.mlb.com/components/game/mlb/year_{year:04d}/'
 
 GAME_URL_TEMPLATE = 'http://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live'
 
-PLACEHOLDER_INDEX = (
-    '<html id="main_html">'
-    '<head>'
-    '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>'
-    '<!-- Global site tag (gtag.js) - Google Analytics -->'
-    '<script async src="https://www.googletagmanager.com/gtag/js?id=UA-108577160-1"></script>'
-    '<script>'
-        'window.dataLayer = window.dataLayer || [];'
-        'function gtag(){{dataLayer.push(arguments);}}'
-        'gtag("js", new Date());'
-        'gtag("config", "UA-108577160-1");'
-    '</script>'
-    '<script>'
-        'function gotogame() {{'
-            'window.location = "./" + document.getElementById("year").value +'
-            '"-" + document.getElementById("month").value + "-" +'
-            'document.getElementById("day").value + ".html";'
-        '}}'
-    '</script>'
-    '<script>'
-      'function gobackone() {{'
-        'window.location = "./{yesterday_html}";'
-      '}}'
-    '</script>'
-    '<script>'
-      'function goforwardone() {{'
-        'window.location = "./{tomorrow_html}";'
-    '}}'
-    '</script>'
-    '<script>'
-        '$(document).ready(function() {{'
-            '$.get(\'index_template.html\', function (data) {{'
-                'document.getElementById("main_html").innerHTML = data;'
-                'var arr = document.getElementById("main_html").getElementsByTagName(\'script\');'
-                'for (var n = 0; n < arr.length; n++)'
-                    'eval(arr[n].innerHTML)'
-            '}});'
-            'setInterval(function() {{'
-                '$.get(\'index_template.html\', function (data) {{'
-                    'document.getElementById("main_html").innerHTML = data;'
-                    'var arr = document.getElementById("main_html").getElementsByTagName(\'script\');'
-                    'for (var n = 0; n < arr.length; n++)'
-                        'eval(arr[n].innerHTML)'
-                '}});'
-            '}}, 300000);'
-        '}});'
-    '</script>'
-    '</head>'
-    '<body>'
-    '</body>'
-    '</html>'
-)
-
 HTML_INDEX_PAGE = (
-    '<html>'
+    '<html id="main_html">'
       '<head>'
       '<style>'
       '.clickme'
@@ -125,6 +72,15 @@ HTML_INDEX_PAGE = (
           'function goforwardone() {{'
             'window.location = "./{tomorrow_html}";'
           '}}'
+        '</script>'
+        '<script>'
+            '$(document).ready(function() {{'
+                'setInterval(function() {{'
+                    '$.get(\'{output_filename}\', function (data) {{'
+                        'document.getElementById("main_html").innerHTML = data;'
+                    '}});'
+                '}}, 15000);'
+            '}});'
         '</script>'
         '<title>Live Baseball Scorecards</title>'
       '</head>'
@@ -239,7 +195,7 @@ OBJECT_ENTRY_TEMPLATE = (
     '$.get(\'{game_id_str}.svg\', function (data) {{'
     'document.getElementById("{game_id_str}").innerHTML = new XMLSerializer().serializeToString(data.documentElement).replace(\'height="2256" \', \'height="735" \');'
     '}});'
-    '}}, 10000);'
+    '}}, 3000);'
     '}});'
     '</script>'
     '<td valign="top"><div align="center">'
@@ -828,10 +784,8 @@ def write_games_for_date(this_datetime, output_dir):
         with open(output_dir + output_filename, 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
-    with open(output_dir + '/index_template.html', 'w', encoding='utf-8') as fh:
-        fh.write(output_html)
-    with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
-        fh.write(PLACEHOLDER_INDEX.format(yesterday_html=yesterday_html, tomorrow_html=tomorrow_html))
+        with open(output_dir + 'index.html', 'w', encoding='utf-8') as fh:
+            fh.write(output_html)
 
 @tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
