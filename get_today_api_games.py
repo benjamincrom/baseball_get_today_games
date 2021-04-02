@@ -79,7 +79,7 @@ HTML_INDEX_PAGE = (
                     '$.get(\'{output_filename}\', function (data) {{'
                         'document.getElementById("main_html").innerHTML = data;'
                     '}});'
-                '}}, 300000);'
+                '}}, 600000);'
             '}});'
         '</script>'
         '<title>Live Baseball Scorecards</title>'
