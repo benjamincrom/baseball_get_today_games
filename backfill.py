@@ -5,6 +5,7 @@ from sys import argv, exc_info
 from os import mkdir, makedirs, listdir
 from os.path import exists, abspath, isfile, join
 from traceback import format_exception
+from pytz import timezone
 
 from ddtrace import tracer
 
@@ -713,7 +714,10 @@ def write_games_for_date(this_datetime, file_list, output_dir):
         else:
             year_list.append('')
 
-    today_str = this_datetime.strftime("%B %d, %Y")
+    today_str = '{} {}, {}'.format(this_datetime.strftime("%B"),
+                                   this_datetime.day,
+                                   this_datetime.year)
+
     yesterday = this_datetime - timedelta(days=1)
     tomorrow = this_datetime + timedelta(days=1)
     yesterday_html = '{:04d}-{:02d}-{:02d}.html'.format(int(yesterday.year), int(yesterday.month), int(yesterday.day))
@@ -736,7 +740,11 @@ def generate_today_game_svgs(date_file_list_dict):
     for date_str, file_list in date_file_list_dict.items():
         today_datetime = parse(date_str)
         try:
-            write_games_for_date(today_datetime, file_list, output_dir)
+            write_games_for_date(
+                today_datetime.astimezone(timezone('America/New_York')),
+                file_list,
+                output_dir
+            )
         except Exception as e:
             print(e)
             print()
@@ -746,7 +754,7 @@ def daterange(start_date, end_date):
         yield start_date + timedelta(n)
 
 if __name__ == '__main__':
-    start_date = date(2010, 1, 1)
+    start_date = date(2009, 12, 31)
     end_date = date(2020, 1, 1)
     mypath = '/var/www/html'
 
