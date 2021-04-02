@@ -780,7 +780,7 @@ def write_games_for_date(this_datetime, output_dir):
         with open(output_dir + output_filename, 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
-        with open(output_dir + 'index.html', 'w', encoding='utf-8') as fh:
+        with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
 @tracer.wrap(service='get-todays-games')
