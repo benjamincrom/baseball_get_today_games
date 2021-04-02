@@ -195,7 +195,7 @@ OBJECT_ENTRY_TEMPLATE = (
     '$.get(\'{game_id_str}.svg\', function (data) {{'
     'document.getElementById("{game_id_str}").innerHTML = new XMLSerializer().serializeToString(data.documentElement).replace(\'height="2256" \', \'height="735" \');'
     '}});'
-    '}}, 3000);'
+    '}}, 10000);'
     '}});'
     '</script>'
     '<td valign="top"><div align="center">'
