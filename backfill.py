@@ -741,7 +741,7 @@ def generate_today_game_svgs(date_file_list_dict):
         today_datetime = parse(date_str)
         try:
             write_games_for_date(
-                today_datetime.astimezone(timezone('America/New_York')),
+                today_datetime,
                 file_list,
                 output_dir
             )
