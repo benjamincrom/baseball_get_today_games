@@ -273,6 +273,8 @@ def set_player_list(team_dict, team):
             this_era = float(this_player_dict['seasonStats']['pitching']['era'])
             if this_era != 0.0:
                 new_player.era = this_era
+            else:
+                new_player.era = ''
         else:
             new_player.era = ''
 
