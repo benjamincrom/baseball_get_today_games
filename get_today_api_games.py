@@ -260,16 +260,21 @@ def set_player_list(team_dict, team):
             this_player_dict['person']['fullName']
         )
 
-        team.append(
-            baseball.Player(
-                last_name,
-                first_name,
-                this_player_dict['person']['id'],
-                float(this_player_dict['seasonStats']['batting']['obp']),
-                float(this_player_dict['seasonStats']['batting']['slg']),
-                jersey_number
-            )
+        new_player = baseball.Player(
+            last_name,
+            first_name,
+            this_player_dict['person']['id'],
+            float(this_player_dict['seasonStats']['batting']['obp']),
+            float(this_player_dict['seasonStats']['batting']['slg']),
+            jersey_number
         )
+
+        if this_player_dict['seasonStats']['pitching']['era'] != '-.--':
+            new_player.era = float(this_player_dict['seasonStats']['pitching']['era'])
+        else:
+            new_player.era = ''
+
+        team.append(new_player)
 
 def initialize_team(team_gamedata_dict, team_livedata_dict):
     team = baseball.Team(
