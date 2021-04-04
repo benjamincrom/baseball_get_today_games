@@ -548,12 +548,12 @@ def process_at_bat(plate_appearance, event_list, game_obj, steal_description,
                                                         game_obj)
 
     event_list += new_event_list
-    if not plate_appearance['result'].get('description'):
-        return None
-
-    plate_appearance_desc = baseball.process_game_xml.fix_description(
-        plate_appearance['result'].get('description')
-    )
+    if plate_appearance['result'].get('description'):
+        plate_appearance_desc = baseball.process_game_xml.fix_description(
+            plate_appearance['result'].get('description')
+        )
+    else:
+        plate_appearance_desc = ''
 
     pitcher_id = int(plate_appearance['matchup']['pitcher']['id'])
     inning_outs = int(plate_appearance['count']['outs'])
@@ -584,7 +584,7 @@ def process_at_bat(plate_appearance, event_list, game_obj, steal_description,
 
     start_datetime = baseball.process_game_xml.get_datetime(plate_appearance['about']['startTime'])
     end_datetime = baseball.process_game_xml.get_datetime(plate_appearance['about']['endTime'])
-    plate_appearance_summary = plate_appearance['result']['event'].strip()
+    plate_appearance_summary = plate_appearance['result'].get('event', '').strip()
 
     plate_appearance_obj = baseball.PlateAppearance(start_datetime,
                                                     end_datetime,
@@ -689,7 +689,7 @@ def process_inning(baseball_inning, game_obj):
     return this_inning_obj
 
 def set_game_inning_list(inning_dict_list, game_obj):
-    for inning_index, inning_dict in enumerate(inning_dict_list):
+    for _, inning_dict in enumerate(inning_dict_list):
         game_obj.inning_list.append(process_inning(inning_dict, game_obj))
 
 def get_object_html_str(game_html_id_list):
