@@ -18,7 +18,7 @@ ALL_GAMES_URL = ('http://gdx.mlb.com/components/game/mlb/year_{year:04d}/'
 GAME_URL_TEMPLATE = 'http://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live'
 
 HTML_INDEX_PAGE = (
-    '<html id="main_html">'
+    '<html>'
       '<head>'
       '<style>'
       '.clickme'
