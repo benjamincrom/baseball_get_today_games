@@ -287,11 +287,14 @@ def initialize_team(team_gamedata_dict, team_livedata_dict):
     )
 
     set_player_list(team_livedata_dict, team)
-    team.pitcher_list = [
-        baseball.PlayerAppearance(
-            team[team_livedata_dict['pitchers'][0]], 1, 1, 'top', 1
-        )
-    ]
+    if team_livedata_dict.get('pitchers'):
+        team.pitcher_list = [
+            baseball.PlayerAppearance(
+                team[team_livedata_dict['pitchers'][0]], 1, 1, 'top', 1
+            )
+        ]
+    else:
+        team.pitcher_list = []
 
     for _, player_dict in team_livedata_dict['players'].items():
         if player_dict.get('battingOrder'):
@@ -330,16 +333,18 @@ def initialize_game(this_game):
     )
 
     start_date = None
-    for play_event in this_game['liveData']['plays']['allPlays'][0]['playEvents']:
-        if play_event['type'] == 'pitch':
-            start_date = baseball.process_game_xml.get_datetime(
-                play_event['startTime']
-            )
-            break
+    end_date = None
+    if this_game['liveData']['plays'].get('allPlays'):
+        for play_event in this_game['liveData']['plays']['allPlays'][0]['playEvents']:
+            if play_event['type'] == 'pitch':
+                start_date = baseball.process_game_xml.get_datetime(
+                    play_event['startTime']
+                )
+                break
 
-    end_date = baseball.process_game_xml.get_datetime(
-        this_game['liveData']['plays']['allPlays'][-1]['about']['endTime']
-    )
+        end_date = baseball.process_game_xml.get_datetime(
+            this_game['liveData']['plays']['allPlays'][-1]['about']['endTime']
+        )
 
     if start_date:
         game_str = '{:04d}-{:02d}-{:02d}-{}-{}{}'.format(
@@ -745,13 +750,25 @@ def write_games_for_date(this_datetime, output_dir):
             game = initialize_game(game_dict)
             set_game_inning_list(get_inning_dict_list(game_dict), game)
             set_pitcher_wls_codes(game_dict, game)
+
+            if game.home_team.batting_order_list_list[0] is None:
+                game.home_team.batting_order_list_list = [[], [], [], [], [], [], [], [], []]
+            if game.away_team.batting_order_list_list[0] is None:
+                game.away_team.batting_order_list_list = [[], [], [], [], [], [], [], [], []]
+
             game.set_batting_box_score_dict()
             game.set_pitching_box_score_dict()
             game.set_team_stats()
             game.set_gametimes()
-            baseball.fetch_game.write_game_svg_and_html(game.game_date_str, game, output_dir)
+
             if len(game.game_date_str.split('-')) == 6:
                 game_html_id_list.append(game.game_date_str)
+            else:
+                game.game_date_str = '{:04d}-{:02d}-{:02d}-{}'.format(year, month, day, game.game_date_str)
+                if len(game.game_date_str.split('-')) == 6:
+                    game_html_id_list.append(game.game_date_str)
+
+            baseball.fetch_game.write_game_svg_and_html(game.game_date_str, game, output_dir)
         except:
             exc_type, exc_value, exc_traceback = exc_info()
             lines = format_exception(exc_type, exc_value, exc_traceback)
