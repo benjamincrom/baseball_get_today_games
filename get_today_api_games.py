@@ -239,8 +239,9 @@ def parse_name(batter_name):
 
     return player_first_name, player_last_name
 
-def set_player_list(team_dict, team):
-    for _, this_player_dict in team_dict['players'].items():
+def set_player_list(team_dict, gamedata_dict, team):
+    for player_id, this_player_dict in team_dict['players'].items():
+        gamedata_player_dict = gamedata_dict['players'][player_id]
         jersey_number = ''
         if 'jerseyNumber' in this_player_dict and this_player_dict.get('jerseyNumber'):
             if all([character in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -260,6 +261,9 @@ def set_player_list(team_dict, team):
             jersey_number
         )
 
+        new_player.pitch_hand = gamedata_player_dict['pitchHand']['code']
+        new_player.bat_side = gamedata_player_dict['batSide']['code']
+
         if this_player_dict['seasonStats']['pitching']['era'] != '-.--':
             this_era = float(this_player_dict['seasonStats']['pitching']['era'])
             if this_era != 0.0:
@@ -269,15 +273,16 @@ def set_player_list(team_dict, team):
         else:
             new_player.era = ''
 
+
         team.append(new_player)
 
-def initialize_team(team_gamedata_dict, team_livedata_dict):
+def initialize_team(team_gamedata_dict, team_livedata_dict, full_gamedata_dict):
     team = baseball.Team(
         team_gamedata_dict['name'],
         team_gamedata_dict['abbreviation']
     )
 
-    set_player_list(team_livedata_dict, team)
+    set_player_list(team_livedata_dict, full_gamedata_dict, team)
     if team_livedata_dict.get('pitchers'):
         team.pitcher_list = [
             baseball.PlayerAppearance(
@@ -309,12 +314,14 @@ def initialize_team(team_gamedata_dict, team_livedata_dict):
 def initialize_game(this_game):
     away_team = initialize_team(
         this_game['gameData']['teams']['away'],
-        this_game['liveData']['boxscore']['teams']['away']
+        this_game['liveData']['boxscore']['teams']['away'],
+        this_game['gameData'],
     )
 
     home_team = initialize_team(
         this_game['gameData']['teams']['home'],
-        this_game['liveData']['boxscore']['teams']['home']
+        this_game['liveData']['boxscore']['teams']['home'],
+        this_game['gameData']
     )
 
     location = '{}, {}, {}'.format(
