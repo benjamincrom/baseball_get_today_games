@@ -311,7 +311,7 @@ def initialize_team(team_gamedata_dict, team_livedata_dict, full_gamedata_dict):
 
     return team
 
-def initialize_game(this_game):
+def initialize_game(this_game, attendance):
     away_team = initialize_team(
         this_game['gameData']['teams']['away'],
         this_game['liveData']['boxscore']['teams']['away'],
@@ -369,6 +369,9 @@ def initialize_game(this_game):
         end_date,
         None
     )
+
+    if attendance:
+        game_obj.attendance = attendance
 
     return game_obj
 
@@ -745,7 +748,7 @@ def write_games_for_date(this_datetime, output_dir):
     game_html_id_list = []
     for game_dict in game_dict_list:
         try:
-            game = initialize_game(game_dict)
+            game = initialize_game(game_dict, game_dict['gameData']['gameInfo'].get('attendance'))
             set_game_inning_list(get_inning_dict_list(game_dict), game)
             set_pitcher_wls_codes(game_dict, game)
 
