@@ -311,7 +311,7 @@ def initialize_team(team_gamedata_dict, team_livedata_dict, full_gamedata_dict):
 
     return team
 
-def initialize_game(this_game, attendance):
+def initialize_game(this_game, attendance_str, temperature_str):
     away_team = initialize_team(
         this_game['gameData']['teams']['away'],
         this_game['liveData']['boxscore']['teams']['away'],
@@ -370,8 +370,11 @@ def initialize_game(this_game, attendance):
         None
     )
 
-    if attendance:
-        game_obj.attendance = attendance
+    if attendance_str:
+        game_obj.attendance = int(attendance_str)
+
+    if temperature_str:
+        game_obj.temp = int(temperature_str)
 
     return game_obj
 
@@ -748,7 +751,10 @@ def write_games_for_date(this_datetime, output_dir):
     game_html_id_list = []
     for game_dict in game_dict_list:
         try:
-            game = initialize_game(game_dict, game_dict['gameData']['gameInfo'].get('attendance'))
+            game = initialize_game(game_dict,
+                                   game_dict['gameData']['gameInfo'].get('attendance'),
+                                   game_dict['gameData']['weather']['temp'])
+
             set_game_inning_list(get_inning_dict_list(game_dict), game)
             set_pitcher_wls_codes(game_dict, game)
 
@@ -830,7 +836,6 @@ def write_games_for_date(this_datetime, output_dir):
         with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
-@tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
     time_shift = timedelta(hours=7)
     for i in range(0, 1):
