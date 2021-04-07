@@ -311,7 +311,7 @@ def initialize_team(team_gamedata_dict, team_livedata_dict, full_gamedata_dict):
 
     return team
 
-def initialize_game(this_game, attendance_str, temperature_str):
+def initialize_game(this_game, attendance_str, temperature_str, weather_str):
     away_team = initialize_team(
         this_game['gameData']['teams']['away'],
         this_game['liveData']['boxscore']['teams']['away'],
@@ -375,6 +375,9 @@ def initialize_game(this_game, attendance_str, temperature_str):
 
     if temperature_str:
         game_obj.temp = int(temperature_str)
+
+    if weather_str:
+        game_obj.weather = weather_str
 
     return game_obj
 
@@ -753,7 +756,8 @@ def write_games_for_date(this_datetime, output_dir):
         try:
             game = initialize_game(game_dict,
                                    game_dict.get('gameData', {}).get('gameInfo', {}).get('attendance', ''),
-                                   game_dict.get('gameData', {}).get('weather', {}).get('temp', ''))
+                                   game_dict.get('gameData', {}).get('weather', {}).get('temp', ''),
+                                   game_dict.get('gameData', {}).get('weather', {}).get('condition', ''))
 
             set_game_inning_list(get_inning_dict_list(game_dict), game)
             set_pitcher_wls_codes(game_dict, game)
