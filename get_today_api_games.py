@@ -752,8 +752,8 @@ def write_games_for_date(this_datetime, output_dir):
     for game_dict in game_dict_list:
         try:
             game = initialize_game(game_dict,
-                                   game_dict('gameData', {}).get('gameInfo', {}).get('attendance', ''),
-                                   game_dict('gameData', {}).get('weather', {}).get('temp', ''))
+                                   game_dict.get('gameData', {}).get('gameInfo', {}).get('attendance', ''),
+                                   game_dict.get('gameData', {}).get('weather', {}).get('temp', ''))
 
             set_game_inning_list(get_inning_dict_list(game_dict), game)
             set_pitcher_wls_codes(game_dict, game)
@@ -836,7 +836,7 @@ def write_games_for_date(this_datetime, output_dir):
         with open(output_dir + '/index.html', 'w', encoding='utf-8') as fh:
             fh.write(output_html)
 
-@tracer.wrap(service='get-todays-games')
+#@tracer.wrap(service='get-todays-games')
 def generate_today_game_svgs(output_dir):
     time_shift = timedelta(hours=7)
     for i in range(0, 1):
