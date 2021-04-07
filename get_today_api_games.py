@@ -752,8 +752,8 @@ def write_games_for_date(this_datetime, output_dir):
     for game_dict in game_dict_list:
         try:
             game = initialize_game(game_dict,
-                                   game_dict['gameData']['gameInfo'].get('attendance'),
-                                   game_dict['gameData']['weather']['temp'])
+                                   game_dict('gameData', {}).get('gameInfo', {}).get('attendance', ''),
+                                   game_dict('gameData', {}).get('weather', {}).get('temp', ''))
 
             set_game_inning_list(get_inning_dict_list(game_dict), game)
             set_pitcher_wls_codes(game_dict, game)
