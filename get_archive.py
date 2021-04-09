@@ -1,10 +1,12 @@
 import datetime
 
 from pathlib import Path
+from sys import exc_info
+from traceback import format_exception
 
 import wget
 
-MLB_TEAM_CODE_DICT = {'LAA': 'ana', 
+MLB_TEAM_CODE_DICT = {'LAA': 'ana',
                       'SEA': 'sea',
                       'BAL': 'bal',
                       'CLE': 'cle',
@@ -51,7 +53,7 @@ with open('file_list.txt') as fh:
 name_list = [x.strip()[:-4] for x in rough_name_list
              if len(x.strip()) > 15 and x.strip()[-4:] != 'html']
 
-
+fh = open('output_log.txt', 'w')
 this_date = datetime.datetime(2018, 1, 1, 0, 0)
 while this_date.year < 2020:
     for name in name_list:
@@ -76,8 +78,16 @@ while this_date.year < 2020:
                 home_mlb_code=home_mlb_code, game_number=game_number
             )
 
-            wget.download(url_prefix + BOXSCORE_SUFFIX, full_path)
-            wget.download(url_prefix + PLAYERS_SUFFIX, full_path)
-            wget.download(url_prefix + INNING_SUFFIX, full_path + 'inning/')
+            try:
+                wget.download(url_prefix + BOXSCORE_SUFFIX, full_path)
+                wget.download(url_prefix + PLAYERS_SUFFIX, full_path)
+                wget.download(url_prefix + INNING_SUFFIX, full_path + 'inning/')
+            except:
+                exc_type, exc_value, exc_traceback = exc_info()
+                lines = format_exception(exc_type, exc_value, exc_traceback)
+                exception_str = ' '.join(lines)
+                fh.write('{} {} {}\n\n'.format(datetime.datetime.utcnow(),
+                                               url_prefix,
+                                               exception_str))
 
     this_date = this_date + datetime.timedelta(days=1)
