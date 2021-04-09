@@ -149,3 +149,4 @@ if __name__ == '__main__':
             get_archive_2020(current_date, fh)
 
         current_date = current_date + datetime.timedelta(days=1)
+
