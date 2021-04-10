@@ -85,9 +85,17 @@ def get_archive_2019(this_date, filehandle):
         )
 
         try:
-            wget.download(url_prefix + BOXSCORE_SUFFIX, full_path)
-            wget.download(url_prefix + PLAYERS_SUFFIX, full_path)
-            wget.download(url_prefix + INNING_SUFFIX, full_path + 'inning/')
+            boxscore_file = Path(full_path + BOXSCORE_SUFFIX)
+            if not boxscore_file.exists():
+                wget.download(url_prefix + BOXSCORE_SUFFIX, full_path)
+
+            players_file = Path(full_path + PLAYERS_SUFFIX)
+            if not players_file.exists():
+                wget.download(url_prefix + PLAYERS_SUFFIX, full_path)
+
+            inning_file = Path(full_path + INNING_SUFFIX)
+            if not inning_file.exists():
+                wget.download(url_prefix + INNING_SUFFIX, full_path + 'inning/')
         except:
             exc_type, exc_value, exc_traceback = exc_info()
             lines = format_exception(exc_type, exc_value, exc_traceback)
@@ -127,18 +135,20 @@ def get_archive_2020(this_date, filehandle):
 
         Path(full_path).mkdir(parents=True, exist_ok=True)
         try:
-            wget.download(url, full_path)
+            live_file = Path(full_path + 'live')
+            if not live_file.exists():
+                wget.download(url, full_path)
         except:
             exc_type, exc_value, exc_traceback = exc_info()
             lines = format_exception(exc_type, exc_value, exc_traceback)
             exception_str = ' '.join(lines)
-            filehandle.write('{} {} {}\n\n'.format(datetime.datetime.utcnow(),
+            filehandle.write('{} {} {}\n\n'.format(str(this_date),
                                                    url,
                                                    exception_str))
 
 if __name__ == '__main__':
-    start_date = datetime.datetime(2000, 9, 1, 0, 0)
-    end_date = datetime.datetime(2021, 4, 9, 0, 0)
+    start_date = datetime.datetime(2021, 4, 1, 0, 0)
+    end_date = datetime.datetime(2021, 4, 1, 0, 0)
 
     fh = open('output_log.txt', 'w')
     current_date = start_date
@@ -149,4 +159,3 @@ if __name__ == '__main__':
             get_archive_2020(current_date, fh)
 
         current_date = current_date + datetime.timedelta(days=1)
-
