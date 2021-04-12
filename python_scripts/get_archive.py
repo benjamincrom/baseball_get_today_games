@@ -161,14 +161,14 @@ if __name__ == '__main__':
 
     #    current_date = current_date + datetime.timedelta(days=1)
 
-    with open('output_log.txt') as read_handle:
+    with open('output_log.txt', 'r') as read_handle:
         line_list = read_handle.readlines()
 
     datetime_list = [parse(line.strip().split(' ', 1)[0])
                      for line in line_list
                      if line[0] not in [' ', '\n']]
 
-    with open('output_log_2.txt') as fh:
+    with open('output_log_2.txt', 'w') as fh:
         for current_date in datetime_list:
             if current_date.year < 2020:
                 get_archive_2019(current_date, fh)
