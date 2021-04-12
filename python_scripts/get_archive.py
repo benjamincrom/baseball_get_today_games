@@ -7,6 +7,8 @@ from traceback import format_exception
 import requests
 import wget
 
+from dateutil.parser import parse
+
 MLB_TEAM_CODE_DICT = {'LAA': 'ana',
                       'SEA': 'sea',
                       'BAL': 'bal',
@@ -147,15 +149,33 @@ def get_archive_2020(this_date, filehandle):
                                                    exception_str))
 
 if __name__ == '__main__':
-    start_date = datetime.datetime(2021, 4, 1, 0, 0)
-    end_date = datetime.datetime(2021, 4, 1, 0, 0)
+    #start_date = datetime.datetime(2021, 4, 1, 0, 0)
+    #end_date = datetime.datetime(2021, 4, 1, 0, 0)
+    #fh = open('output_log.txt', 'w')
+    #current_date = start_date
+    #while current_date <= end_date:
+    #    if current_date.year < 2020:
+    #        get_archive_2019(current_date, fh)
+    #    else:
+    #        get_archive_2020(current_date, fh)
 
-    fh = open('output_log.txt', 'w')
-    current_date = start_date
-    while current_date <= end_date:
-        if current_date.year < 2020:
-            get_archive_2019(current_date, fh)
-        else:
-            get_archive_2020(current_date, fh)
+    #    current_date = current_date + datetime.timedelta(days=1)
 
-        current_date = current_date + datetime.timedelta(days=1)
+
+    
+    #with open('output_log.txt') as read_handle:
+    #    line_list = read_handle.readlines()
+
+    #datetime_list = [parse(line.strip().split(' ', 1)[0])
+    #                 for line in line_list
+    #                 if line[0] not in [' ', '\n']]
+
+    #with open('output_log_2.txt') as fh:
+    #    for current_date in datetime_list:
+    #        if current_date.year < 2020:
+    #            get_archive_2019(current_date, fh)
+    #        else:
+    #            get_archive_2020(current_date, fh)
+    fh = open('log_test.txt', 'w')
+    current_date = datetime.datetime(2015, 4, 8)
+    get_archive_2019(current_date, fh)
