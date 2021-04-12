@@ -53,7 +53,7 @@ BOXSCORE_SUFFIX = 'boxscore.xml'
 PLAYERS_SUFFIX = 'players.xml'
 INNING_SUFFIX = 'inning/inning_all.xml'
 
-def get_archive_2019(this_date, filehandle):
+def get_archive_old(this_date, filehandle):
     month = this_date.month
     day = this_date.day
     year = this_date.year
@@ -61,6 +61,11 @@ def get_archive_2019(this_date, filehandle):
         all_games_dict = requests.get(
             ALL_GAMES_URL.format(month=month, day=day, year=year)
         ).json()
+
+        if isinstance(all_games_dict['data']['games'].get('game', []), dict):
+            all_games_dict['data']['games']['game'] = [
+                all_games_dict['data']['games']['game']
+            ]
 
         game_id_list = [
             game_dict['id'].replace('-', '_').replace('/', '_')
@@ -106,7 +111,7 @@ def get_archive_2019(this_date, filehandle):
                                                    url_prefix,
                                                    exception_str))
 
-def get_archive_2020(this_date, filehandle):
+def get_archive_new(this_date, filehandle):
     month = this_date.month
     day = this_date.day
     year = this_date.year
@@ -114,6 +119,11 @@ def get_archive_2020(this_date, filehandle):
         all_games_dict = requests.get(
             ALL_GAMES_URL.format(month=month, day=day, year=year)
         ).json()
+
+        if isinstance(all_games_dict['data']['games'].get('game', []), dict):
+            all_games_dict['data']['games']['game'] = [
+                all_games_dict['data']['games']['game']
+            ]
 
         game_tuple_list = [
             (x['id'], x['game_pk'])
@@ -149,28 +159,28 @@ def get_archive_2020(this_date, filehandle):
                                                    exception_str))
 
 if __name__ == '__main__':
-    #start_date = datetime.datetime(2021, 4, 1, 0, 0)
-    #end_date = datetime.datetime(2021, 4, 1, 0, 0)
-    #fh = open('output_log.txt', 'w')
-    #current_date = start_date
-    #while current_date <= end_date:
-    #    if current_date.year < 2020:
-    #        get_archive_2019(current_date, fh)
-    #    else:
-    #        get_archive_2020(current_date, fh)
+    start_date = datetime.datetime(2018, 10, 23, 0, 0)
+    end_date = datetime.datetime(2018, 10, 31, 0, 0)
+    fh = open('output_log.txt', 'w')
+    current_date = start_date
+    while current_date <= end_date:
+        if current_date.year < 2019:
+            get_archive_old(current_date, fh)
+        else:
+            get_archive_new(current_date, fh)
 
-    #    current_date = current_date + datetime.timedelta(days=1)
+        current_date = current_date + datetime.timedelta(days=1)
 
-    with open('output_log.txt', 'r') as read_handle:
-        line_list = read_handle.readlines()
+    #with open('output_log.txt', 'r') as read_handle:
+    #    line_list = read_handle.readlines()
 
-    datetime_list = [parse(line.strip().split(' ', 1)[0])
-                     for line in line_list
-                     if line[0] not in [' ', '\n']]
+    #datetime_list = [parse(line.strip().split(' ', 1)[0])
+    #                 for line in line_list
+    #                 if line[0] not in [' ', '\n']]
 
-    with open('output_log_2.txt', 'w') as fh:
-        for current_date in datetime_list:
-            if current_date.year < 2020:
-                get_archive_2019(current_date, fh)
-            else:
-                get_archive_2020(current_date, fh)
+    #with open('output_log_2.txt', 'w') as fh:
+    #    for current_date in datetime_list:
+    #        if current_date.year < 2019:
+    #            get_archive_old(current_date, fh)
+    #        else:
+    #            get_archive_new(current_date, fh)
