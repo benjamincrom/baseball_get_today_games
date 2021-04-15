@@ -157,8 +157,8 @@ def get_archive_new(this_date, filehandle):
                                                    exception_str))
 
 if __name__ == '__main__':
-    start_date = datetime.datetime(2018, 10, 23, 0, 0)
-    end_date = datetime.datetime(2018, 10, 31, 0, 0)
+    start_date = datetime.datetime(2018, 1, 1, 0, 0)
+    end_date = datetime.datetime(2018, 1, 1, 0, 0)
     fh = open('output_log.txt', 'w')
     current_date = start_date
     while current_date <= end_date:
