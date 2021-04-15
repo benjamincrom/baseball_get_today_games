@@ -147,7 +147,8 @@ def get_archive_new(this_date, filehandle):
         try:
             live_file = Path(full_path + 'live')
             if not live_file.exists():
-                wget.download(url, full_path)
+                r = requests.get(url, allow_redirects=True)
+                open(full_path + 'live', 'wb').write(r.content)
         except:
             exc_type, exc_value, exc_traceback = exc_info()
             lines = format_exception(exc_type, exc_value, exc_traceback)
@@ -157,8 +158,8 @@ def get_archive_new(this_date, filehandle):
                                                    exception_str))
 
 if __name__ == '__main__':
-    start_date = datetime.datetime(2018, 1, 1, 0, 0)
-    end_date = datetime.datetime(2018, 1, 1, 0, 0)
+    start_date = datetime.datetime(2019, 1, 1, 0, 0)
+    end_date = datetime.datetime(2022, 1, 1, 0, 0)
     fh = open('output_log.txt', 'w')
     current_date = start_date
     while current_date <= end_date:
