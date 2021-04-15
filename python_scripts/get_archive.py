@@ -78,8 +78,6 @@ def get_archive_old(this_date, filehandle):
         filehandle.write('{} {}\n\n'.format(str(this_date),
                                             exception_str))
 
-        return
-
     for game_id in game_id_list:
         full_path = "{:04d}/month_{:02d}/day_{:02d}/gid_{}/".format(
             year, month, day, game_id
