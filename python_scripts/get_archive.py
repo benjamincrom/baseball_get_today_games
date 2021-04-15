@@ -134,8 +134,6 @@ def get_archive_new(this_date, filehandle):
         filehandle.write('{} {}\n\n'.format(str(this_date),
                                             exception_str))
 
-        return
-
     for formatted_id, game_pk in game_tuple_list:
         url = GAME_URL_2020_TEMPLATE.format(game_pk=game_pk)
         game_id = formatted_id.replace('-', '_').replace('/', '_')
