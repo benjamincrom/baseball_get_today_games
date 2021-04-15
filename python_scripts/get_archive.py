@@ -174,9 +174,9 @@ if __name__ == '__main__':
     #with open('output_log.txt', 'r') as read_handle:
     #    line_list = read_handle.readlines()
 
-    #datetime_list = [parse(line.strip().split(' ', 1)[0])
-    #                 for line in line_list
-    #                 if line[0] not in [' ', '\n']]
+    #datetime_list = set([parse(line.strip().split(' ', 1)[0])
+    #                     for line in line_list
+    #                     if line[0] not in [' ', '\n']])
 
     #with open('output_log_2.txt', 'w') as fh:
     #    for current_date in datetime_list:
