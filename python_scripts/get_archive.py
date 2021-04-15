@@ -57,6 +57,7 @@ def get_archive_old(this_date, filehandle):
     month = this_date.month
     day = this_date.day
     year = this_date.year
+    game_id_list = []
     try:
         all_games_dict = requests.get(
             ALL_GAMES_URL.format(month=month, day=day, year=year)
@@ -113,6 +114,7 @@ def get_archive_new(this_date, filehandle):
     month = this_date.month
     day = this_date.day
     year = this_date.year
+    game_id_list = []
     try:
         all_games_dict = requests.get(
             ALL_GAMES_URL.format(month=month, day=day, year=year)
