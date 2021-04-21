@@ -5,8 +5,8 @@ from ddtrace import tracer
 
 @tracer.wrap(service='get-todays-games')
 def get_todays_games():
-    start = datetime.datetime(2018, 1, 1)
-    end = datetime.datetime(2021, 4, 12)
+    start = datetime.datetime(2019, 1, 1)
+    end = datetime.datetime(2021, 12, 31)
     interval = datetime.timedelta(days=1)
     this_date = start
 
